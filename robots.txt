@@ -1,0 +1,24 @@
+User-Agent: * (It defines the robot hwich are not allowed to crawl these disallowed routes)
+Disallow: /api/
+Disallow: /!api/
+Disallow: /*/changesets/
+Disallow: /*/changeset/
+Disallow: /*/annotate/
+Disallow: /*/history/
+Disallow: /xhr/*
+Disallow: /*/atom/
+Disallow: /*/rss/
+Disallow: /*/compare/*
+Disallow: /*/src/*
+Disallow: /*/history-node/*
+
+Disallow: /jerkstore/*
+Disallow: /npln/*
+
+# Google Site Link Exclusions
+Disallow: /repo/create
+Disallow: /dashboard/overview
+Disallow: /account/password/reset/
+
+User-agent: 008
+Disallow: /

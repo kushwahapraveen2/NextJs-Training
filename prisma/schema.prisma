@@ -1,0 +1,74 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AuthProvider {
+  local
+  google
+  github
+  facebook
+}
+
+enum Role {
+  user
+  admin
+}
+
+model Diary {
+  id            String       @id @default(uuid())
+  title         String
+  slug          String       @unique
+  content       String
+  coverImage    String
+  images        String[]     // Stored as Postgres array
+  location      String
+  weatherAtTime Json?
+  isPublic      Boolean      @default(false)
+  likes         Int          @default(0)
+  authorId      String
+  author        User         @relation("UserDiaries", fields: [authorId], references: [id])
+  diaryLikes    DiaryLike[]
+  createdAt     DateTime     @default(now())
+}
+
+model DiaryLike {
+  id       String @id @default(uuid())
+  userId   String
+  diaryId  String
+  user     User   @relation("UserLikes", fields: [userId], references: [id], onDelete: Cascade)
+  diary    Diary  @relation(fields: [diaryId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, diaryId])
+}
+
+model User {
+  id               String       @id @default(uuid())
+  name             String
+  username         String       @unique
+  email            String       @unique
+  isEmailVerified  Boolean      @default(false)
+  mobileNumber     String       @unique
+  isMobileVerified Boolean      @default(false)
+  passwordHash     String
+  authProvider     AuthProvider @default(local)
+  providerId       String       @default("")
+  bio              String       @default("")
+  profileImage     String       @default("")
+  location         String       @default("")
+  socialLinks      Json         @default("[]")
+  role             Role         @default(user)
+  isActive         Boolean      @default(true)
+  lastLoginAt      DateTime?
+  diaries          Diary[]      @relation("UserDiaries")
+  diaryLikes       DiaryLike[]  @relation("UserLikes")
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
